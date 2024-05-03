@@ -1,2 +1,11 @@
 # pylorant
 some features for the valo client using the api
+
+# Screenshots:
+  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/b56c62c8-cbb5-4856-aafd-d593c012d70d)
+
+  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/bc8922a5-2e6f-484a-b6ec-0f824fbfae1f)
+
+
+  
+
