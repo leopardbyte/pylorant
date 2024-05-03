@@ -10,7 +10,7 @@ some features for the valo client using the api
             This has to be done after every game cuz checking all the time would rate limit the api
 
 # Requirements
-  [Python](https://www.python.org/downloads/) 3.12
+  [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work)
   -> run requirements.bat
 
 # Screenshots:
