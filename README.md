@@ -6,7 +6,7 @@ some features for the valo client using the api
 
   - use name reveal only when in game (not while in loadscreen)
 
-  Auto Lock: before queueing select your agent -> check the auto lock checkbox -> and queue.
+  Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
             This has to be done after every game cuz checking all the time would rate limit the api
 
 # Screenshots:
