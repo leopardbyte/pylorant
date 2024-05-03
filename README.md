@@ -1,6 +1,12 @@
 # pylorant
 some features for the valo client using the api
 
+# information
+  use name reveal only when in game (not while in loadscreen)
+
+  Auto Lock: before queueing select your agent check the auto lock checkbox and queue.
+            This has to be done after every game cuz checking all the time would rate limit the api
+
 # Screenshots:
   ![image](https://github.com/leopardbyte/pylorant/assets/164386226/b56c62c8-cbb5-4856-aafd-d593c012d70d)
 
