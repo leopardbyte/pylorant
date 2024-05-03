@@ -2,7 +2,7 @@
 some features for the valo client using the api
 
 # information
-  ##To optimize your user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
+  #To optimize your user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
 
   use name reveal only when in game (not while in loadscreen)
 
