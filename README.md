@@ -11,7 +11,9 @@ some features for the valo client using the api
 
 # Requirements
   [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work)
-  
+
+  -> Code->Download zip
+    
   -> run requirements.bat
   
   -> start Valorant
