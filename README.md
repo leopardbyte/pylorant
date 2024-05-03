@@ -1,10 +1,10 @@
 # pylorant
 some features for the valo client using the api
 
-## To optimize your user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
-
 # information
-  use name reveal only when in game (not while in loadscreen)
+  ## To optimize your user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
+
+  - use name reveal only when in game (not while in loadscreen)
 
   Auto Lock: before queueing select your agent check the auto lock checkbox and queue.
             This has to be done after every game cuz checking all the time would rate limit the api
