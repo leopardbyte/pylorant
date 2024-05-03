@@ -9,6 +9,9 @@ some features for the valo client using the api
   Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
             This has to be done after every game cuz checking all the time would rate limit the api
 
+# Requirements
+  [Python(https://www.python.org/downloads/)] 3.12
+
 # Screenshots:
   ![image](https://github.com/leopardbyte/pylorant/assets/164386226/b56c62c8-cbb5-4856-aafd-d593c012d70d)
 
