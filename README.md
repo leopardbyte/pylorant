@@ -40,6 +40,9 @@ PYQT5 GUI with features for the valo client using the api
   
   ![image](https://github.com/leopardbyte/pylorant/assets/164386226/d3203c1c-a444-49b2-af58-124d338eaece)
 
+  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/383ddd8d-fe50-44e1-9667-4fab2199215a)
+
+
   
 
 
