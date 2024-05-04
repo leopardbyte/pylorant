@@ -542,7 +542,7 @@ class MainWindow(QMainWindow):
         if self.auto_lock_checkbox.isChecked():
             self.timer = QTimer()
             self.timer.timeout.connect(self.check_pregame_and_lock)
-            self.timer.start(800)  # Check every second
+            self.timer.start(1000)  # Check every second
 
     def check_pregame_and_lock(self):
         prematchid = get_prematchid(self.port, self.password)
