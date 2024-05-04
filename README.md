@@ -7,7 +7,7 @@ PYQT5 GUI with features for the valo client using the api
 - [x] Dodge button (dodge agent select \ no restart needed)
 - [x] name reveal (only use ingame! not while in loading screen)
 - [x] friends tab \ invite all button 
-- [] loadout
+- [ ] loadout
 
 # Information
   ## To optimize user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
