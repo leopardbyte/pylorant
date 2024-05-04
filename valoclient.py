@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QCheckBox, QComboBox, QLabel, QStyleFactory, QMessageBox, QProgressBar, QListWidget, QListWidgetItem, QAction, QDialog, QSpinBox, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QCheckBox, QComboBox, QLabel, QStyleFactory, QMessageBox, QProgressBar, QListWidget, QListWidgetItem, QAction, QDialog, QSpinBox, QFileDialog, QLineEdit, QTextEdit
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtGui
@@ -228,6 +228,7 @@ class MainWindow(QMainWindow):
         #self.loadout_tab = QWidget()
         self.friends_tab = QWidget()
         self.misc_tab = QWidget()
+        self.custom_tab = QWidget()
 
         self.tab_widget.setStyleSheet("QTabBar::tab { color: black; }")    
         self.tab_widget.addTab(self.matchmaking_tab, "Matchmaking")
@@ -236,6 +237,7 @@ class MainWindow(QMainWindow):
         #self.tab_widget.addTab(self.loadout_tab, "Loadout")
         self.tab_widget.addTab(self.friends_tab, "Friends")
         self.tab_widget.addTab(self.misc_tab, "Misc")
+        self.tab_widget.addTab(self.custom_tab, "Custom")
 
         valorant_icon_base64 = "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"
         valorant_icon_bytes = base64.b64decode(valorant_icon_base64)
@@ -263,6 +265,7 @@ class MainWindow(QMainWindow):
         self.create_reveal_tab()
         self.create_friends_tab()
         self.create_misc_tab()
+        self.create_custom_tab()
 
     def clear_layout(self, layout):
         while layout.count():
@@ -366,7 +369,7 @@ class MainWindow(QMainWindow):
 		"custom"
 	]
         self.queue_dropdown.addItems(queue)
-        self.change_queue_button = QPushButton("Change queue")
+        self.change_queue_button = QPushButton("Change Queue")
         self.change_queue_button.clicked.connect(self.change_queue)
 
 
@@ -515,12 +518,12 @@ class MainWindow(QMainWindow):
             url = f"https://glz-{region}-1.{shard}.a.pvp.net/pregame/v1/matches/{prematchid}/lock/{selected_agent_id}"
             method = "POST"
             response = send_api_request(url, method)
-            if response:  # Check if the request was successful
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Information)
-                msg.setText(f"Successfully locked agent = {self.agent_dropdown.currentText()}")
-                msg.setWindowTitle("Agent Lock")
-                msg.exec_()
+            #if response:  # Check if the request was successful
+                #msg = QMessageBox()
+               # msg.setIcon(QMessageBox.Information)
+                #msg.setText(f"Successfully locked agent = {self.agent_dropdown.currentText()}")
+               # msg.setWindowTitle("Agent Lock")
+                #msg.exec_()
     
     def change_queue(self):
         partyid = get_partyid(self.port, self.password)
@@ -542,7 +545,7 @@ class MainWindow(QMainWindow):
         if self.auto_lock_checkbox.isChecked():
             self.timer = QTimer()
             self.timer.timeout.connect(self.check_pregame_and_lock)
-            self.timer.start(1000)  # Check every second
+            self.timer.start(1500)  # Check every second
 
     def check_pregame_and_lock(self):
         prematchid = get_prematchid(self.port, self.password)
@@ -634,6 +637,76 @@ class MainWindow(QMainWindow):
         self.invite_button.clicked.connect(self.invite_friend)
         layout.addWidget(self.friends_list)
         layout.addWidget(self.invite_button)
+
+    def create_custom_tab(self):
+        layout = QVBoxLayout(self.custom_tab)
+
+        info_box = QLabel()
+        info_box.setTextFormat(Qt.RichText)
+        info_box.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        info_box.setOpenExternalLinks(True)
+        info_box.setText('<p style="color:#F2A541;">send custom api calls (<a href="https://valapidocs.techchrism.me/" style="color:#1F2041; text-decoration: none;">DOCS</a>).</p>')
+        layout.addWidget(info_box)
+
+    # Label and dropdown for API method selection
+        layout.addWidget(QLabel("Method"))
+        self.method_dropdown = QComboBox(self.custom_tab)
+        self.method_dropdown.addItems(["GET", "POST", "DELETE", "PUT"])
+        layout.addWidget(self.method_dropdown)
+
+    # Label and input field for API call
+        layout.addWidget(QLabel("URL"))
+        self.api_input = QLineEdit(self.custom_tab)
+        self.api_input.setStyleSheet("background-color: #334D50;") #fine colors: #334D50 #4A4E69 #225378 oxfordblue: #1F2041
+        layout.addWidget(self.api_input)
+
+    # Label and input field for JSON body data
+        layout.addWidget(QLabel("Body"))
+        self.body_input = QTextEdit(self.custom_tab)
+        self.body_input.setStyleSheet("background-color: #334D50;")
+        layout.addWidget(self.body_input)
+
+    # Submit button
+        self.submit_button = QPushButton('Submit', self.custom_tab)
+        self.submit_button.clicked.connect(self.custom)
+        layout.addWidget(self.submit_button)
+
+    # Label and output field for API response
+        layout.addWidget(QLabel("Output"))
+        self.output_field = QTextEdit(self.custom_tab)
+        self.output_field.setReadOnly(True)
+        self.output_field.setStyleSheet("background-color: #334D50;")
+        layout.addWidget(self.output_field)
+
+        self.custom_tab.setLayout(layout)
+
+    def custom(self):
+        method = self.method_dropdown.currentText()
+        url = self.api_input.text()
+        data = self.body_input.toPlainText()
+
+    # Convert the JSON body data to a Python dictionary if not empty
+        if data.strip():
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError:
+                print("Invalid JSON body data.")
+                return
+        else:
+            data = None
+
+    # Get the puuid and partyid
+        puuid = get_puuid(self.port, self.password)
+        partyid = get_partyid(self.port, self.password)
+
+    # Replace {puuid}, {partyid}, {region}, and {shard} in the URL
+        url = url.format(puuid=puuid, partyid=partyid, region=region, shard=shard)
+
+    # Call the existing API request function
+        response = send_api_request(url, method, data)
+
+    # Display the response in the output field
+        self.output_field.setText(response)
     '''
     def create_friends_tab(self):
     # Check if the friends_tab already has a layout
