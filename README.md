@@ -26,7 +26,7 @@ PYQT5 GUI with features for the valo client using the api
   
   -> start Valorant
   
-  -> start pylorant.py
+  -> start valoclient.py
 
 > [!IMPORTANT]
 > Try to avoid using api calls while in loading screen stages otherwise long loading screens may occur
