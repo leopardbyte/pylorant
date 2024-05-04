@@ -17,7 +17,7 @@ PYQT5 GUI with features for the valo client using the api
             This has to be done after every game cuz checking all the time would rate limit the api
 
  > [!NOTE]
- > It’s prudent to presume the existence of glitches in the software script
+ > It’s prudent to presume the existence of glitches in this software
 
 # Requirements
   [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work aswell)
