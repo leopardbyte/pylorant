@@ -16,7 +16,7 @@ PYQT5 GUI with features for the valo client using the api
 # Requirements
   [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work aswell)
 
-  -> Code->Download zip
+  -> Code->Download zip->extract
     
   -> run requirements.bat
   
