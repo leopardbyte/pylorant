@@ -33,7 +33,8 @@ PYQT5 GUI with features for the valo client using the api
 > Try to avoid using api calls while in loading screen stages otherwise long loading screens may occur
 
 # Screenshots:
-  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/b56c62c8-cbb5-4856-aafd-d593c012d70d)
+  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/b56c62c8-cbb5-4856-aafd-d593c012d70d)  ![image](https://github.com/leopardbyte/pylorant/assets/164386226/d3203c1c-a444-49b2-af58-124d338eaece)
+
 
   ![image](https://github.com/leopardbyte/pylorant/assets/164386226/bc8922a5-2e6f-484a-b6ec-0f824fbfae1f)
 
