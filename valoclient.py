@@ -114,7 +114,6 @@ def send_api_request(url, method, data=None):
             elif method == "PUT":
                 response = requests.put(url, headers=headers, json=data)
                 
-            # Add more elif statements for other methods as needed
             else:
                 print(f"Unsupported method: {method}")
                 return
@@ -157,7 +156,7 @@ class MainWindow(QMainWindow):
         settings_icon_pixmap = QtGui.QPixmap()
         settings_icon_pixmap.loadFromData(settings_icon_bytes)
         settings_icon = QtGui.QIcon(settings_icon_pixmap)
-        self.settings_button = QAction(settings_icon, 'Settings', self)  # Replace 'settings.png' with the path to your settings icon
+        self.settings_button = QAction(settings_icon, 'Settings', self)
         self.toolbar.addAction(self.settings_button)
         self.settings_button.triggered.connect(self.open_settings_dialog)
 
@@ -291,7 +290,7 @@ class MainWindow(QMainWindow):
         if not os.path.exists(valorant_path):
             valorant_path, _ = QFileDialog.getOpenFileName(self, "Select Valorant Executable")
 
-        if valorant_path:  # If a path was selected (or the default path exists)
+        if valorant_path:  
             subprocess.Popen(valorant_path)
         else:
             print("No Valorant executable selected")
@@ -322,12 +321,12 @@ class MainWindow(QMainWindow):
     # Add QSpinBoxes for the window width and height
         layout.addWidget(QLabel("Window Width:"))
         self.width_spinbox = QSpinBox()
-        self.width_spinbox.setRange(500, 2000)  # Set the range to 100-2000 pixels
+        self.width_spinbox.setRange(500, 2000)
         layout.addWidget(self.width_spinbox)
 
         layout.addWidget(QLabel("Window Height:"))
         self.height_spinbox = QSpinBox()
-        self.height_spinbox.setRange(300, 2000)  # Set the range to 100-2000 pixels
+        self.height_spinbox.setRange(300, 2000)
         layout.addWidget(self.height_spinbox)
 
     # Add a button to save the settings
