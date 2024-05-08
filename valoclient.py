@@ -299,23 +299,20 @@ class MainWindow(QMainWindow):
             self.toolbar.hide()
 
     def open_settings_dialog(self):
-    # Create a dialog
+    
         dialog = QDialog(self)
         dialog.setWindowTitle("Settings")
         dialog.setWhatsThis("has to be 6 seconds or higher cuz on lower valo might freeze in loadscreen...")
 
-    # Create a layout for the dialog
         layout = QVBoxLayout()
         dialog.setLayout(layout)
         dialog.setStyleSheet("background-color: #1F2041; color: #E5E5E5;") #fine colors: #334D50 #4A4E69 #225378 oxfordblue: #1F2041
 
-    # Add a QSpinBox for the delay time
         layout.addWidget(QLabel("Delay Time for agent select (seconds):"))
         self.delay_time_spinbox = QSpinBox()
         self.delay_time_spinbox.setRange(6, 60)  # Set the range to 1-60 seconds
         layout.addWidget(self.delay_time_spinbox)
 
-    # Add QSpinBoxes for the window width and height
         layout.addWidget(QLabel("Window Width:"))
         self.width_spinbox = QSpinBox()
         self.width_spinbox.setRange(500, 2000)
@@ -326,16 +323,13 @@ class MainWindow(QMainWindow):
         self.height_spinbox.setRange(300, 2000)
         layout.addWidget(self.height_spinbox)
 
-    # Add a button to save the settings
         save_button = QPushButton("Save")
         save_button.clicked.connect(self.save_settings)
         layout.addWidget(save_button)
 
-    # Show the dialog
         dialog.exec_()
 
     def save_settings(self):
-    # Get the value from the QSpinBox
         self.delay_time = self.delay_time_spinbox.value()
         self.width = self.width_spinbox.value()
         self.height = self.height_spinbox.value()
@@ -404,15 +398,12 @@ class MainWindow(QMainWindow):
     def create_reveal_tab(self):
         layout = QVBoxLayout()
 
-        # Create a button for revealing names
         self.reveal_names_button = QPushButton("Reveal Names")
         self.reveal_names_button.clicked.connect(self.reveal_names)
 
-        # Create an output field for displaying the names
         self.names_output = QLabel()
         self.names_output.setWordWrap(True)
 
-        # Add the widgets to the layout
         layout.addWidget(self.reveal_names_button)
         layout.addWidget(self.names_output)
 
@@ -493,7 +484,6 @@ class MainWindow(QMainWindow):
         send_api_request(url, method, data)
 
     def enter_queue(self):
-        # Replace with the actual URL and method for entering the queue
         partyid = get_partyid(self.port, self.password)
         url = f"https://glz-eu-1.eu.a.pvp.net/parties/v1/parties/{partyid}/matchmaking/join"
         method = "POST"
@@ -501,7 +491,6 @@ class MainWindow(QMainWindow):
 
     def leave_queue(self):
         partyid = get_partyid(self.port, self.password)
-        # Replace with the actual URL and method for leaving the queue
         url = f"https://glz-eu-1.eu.a.pvp.net/parties/v1/parties/{partyid}/matchmaking/leave"
         method = "POST"
         send_api_request(url, method)
@@ -550,7 +539,6 @@ class MainWindow(QMainWindow):
             self.timer.stop()  # Stop checking once a match is found and the agent is locked
     #reveals all players that have their privacy settings enabled
     def reveal_names(self):
-    # Get the pre-game match ID
         match_ids = get_matchid(self.port, self.password)
         if not match_ids:
         # Show a pop-up message if no active game is found
@@ -591,18 +579,14 @@ class MainWindow(QMainWindow):
     # Combine the player names, taglines, and agent names
         player_names = [f"{player['GameName']} {player['TagLine']} ({next(agent for puuid, agent in player_info if puuid == player['Subject'])})" for player in response_data]
 
-    # Display the names in the output field
         self.names_output.setText("\n".join(player_names))
 
     def create_friends_tab(self):
-    # Check if the friends_tab already has a layout
         layout = self.friends_tab.layout()
         if layout is None:
-        # If not, create a new QVBoxLayout
             layout = QVBoxLayout()
             self.friends_tab.setLayout(layout)
         else:
-        # If it does, clear the existing layout
             self.clear_layout(layout)
 
         self.friends_list = QListWidget()
@@ -644,30 +628,25 @@ class MainWindow(QMainWindow):
         info_box.setText('<p style="color:#F2A541;">send custom api calls (<a href="https://valapidocs.techchrism.me/" style="color:#1F2041; text-decoration: none;">DOCS</a>).</p>')
         layout.addWidget(info_box)
 
-    # Label and dropdown for API method selection
         layout.addWidget(QLabel("Method"))
         self.method_dropdown = QComboBox(self.custom_tab)
         self.method_dropdown.addItems(["GET", "POST", "DELETE", "PUT"])
         layout.addWidget(self.method_dropdown)
 
-    # Label and input field for API call
         layout.addWidget(QLabel("URL"))
         self.api_input = QLineEdit(self.custom_tab)
         self.api_input.setStyleSheet("background-color: #334D50;") #fine colors: #334D50 #4A4E69 #225378 oxfordblue: #1F2041
         layout.addWidget(self.api_input)
 
-    # Label and input field for JSON body data
         layout.addWidget(QLabel("Body"))
         self.body_input = QTextEdit(self.custom_tab)
         self.body_input.setStyleSheet("background-color: #334D50;")
         layout.addWidget(self.body_input)
 
-    # Submit button
         self.submit_button = QPushButton('Submit', self.custom_tab)
         self.submit_button.clicked.connect(self.custom)
         layout.addWidget(self.submit_button)
 
-    # Label and output field for API response
         layout.addWidget(QLabel("Output"))
         self.output_field = QTextEdit(self.custom_tab)
         self.output_field.setReadOnly(True)
@@ -695,10 +674,8 @@ class MainWindow(QMainWindow):
         puuid = get_puuid(self.port, self.password)
         partyid = get_partyid(self.port, self.password)
 
-    # Replace {puuid}, {partyid}, {region}, and {shard} in the URL
         url = url.format(puuid=puuid, partyid=partyid, region=region, shard=shard)
 
-    # Call the existing API request function
         response = send_api_request(url, method, data)
 
     # Display the response in the output field
@@ -760,9 +737,6 @@ class MainWindow(QMainWindow):
                     send_api_request(url, method)
 
 
-    
-
-
 app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
 app.setStyle(QStyleFactory.create('Fusion'))  # Set the application style to 'Fusion'
 window = MainWindow()
@@ -778,9 +752,5 @@ window.show()
 
 app.exec_()
 
-
-# PUT https://pd.{shard}.a.pvp.net/personalization/v2/players/{puuid}/playerloadout
-
-# create new Loadout tab to select presets and change loadout with 1 click. read external api weapon ids and skin ids filter for owned and show a list to select each weapon skin and then save to preset. 2 days later aint doing this getting rito small brain
-
+# create new Loadout tab to select presets and change loadout with 1 click. read external api data weapon ids and skin ids filter for owned and show a list to select each weapon skin and then save to preset. Current Loadout implementation is bugged cuz not getting current loadout to also set current loadout :c
 #Future features: switch button to set party availability on/off | alr done lol
