@@ -15,7 +15,7 @@ PYQT5 GUI with features for the valo client using the api
 
   Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
   
-  after a match reactivate auto lock before queuing
+  after a match reactivate auto lock before or while queuing
 
 
 # Requirements
