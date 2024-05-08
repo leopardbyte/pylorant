@@ -14,7 +14,7 @@ PYQT5 GUI with features for the valo client using the api
   ## To optimize user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
 
   Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
-            This has to be done after every game cuz checking all the time would rate limit the api
+            after a match reactivate auto lock before queuing
 
 
 # Requirements
