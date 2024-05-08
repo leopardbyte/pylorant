@@ -16,8 +16,6 @@ PYQT5 GUI with features for the valo client using the api
   Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
             This has to be done after every game cuz checking all the time would rate limit the api
 
- > [!NOTE]
- > It’s prudent to presume the existence of bugs in this software
 
 # Requirements
   [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work aswell)
