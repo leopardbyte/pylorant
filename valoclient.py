@@ -81,10 +81,8 @@ def get_partyid(port, password):
 def get_tokens(port, password):
     global auth_token, entitlement_token
     if auth_token and entitlement_token:
-        # If the tokens have already been fetched, return them
         return auth_token, entitlement_token
     else:
-        # Otherwise, make the API call to fetch the tokens
         url = f"https://127.0.0.1:{port}/entitlements/v1/token"
         response = requests.get(url, auth=("riot", password), verify=False)
         if response.status_code == 200:
@@ -140,7 +138,6 @@ class MainWindow(QMainWindow):
         self.toolbar = self.addToolBar('yk')
         self.addToolBar(Qt.BottomToolBarArea, self.toolbar)
 
-        # In your __init__ method, after creating the toolbar
         #self.viewMenu = self.menuBar().addMenu("View")
         #self.toggleToolbarAction = self.viewMenu.addAction("Show Toolbar")
         #self.toggleToolbarAction.setCheckable(True)
