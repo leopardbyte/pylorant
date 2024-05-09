@@ -10,8 +10,15 @@ import json
 import time
 import subprocess
 import base64
-region = "eu" #add region % shard selection on first loadup
-shard  = "eu"
+try:
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+        region = settings['region']
+        shard = settings['shard']
+except FileNotFoundError:
+    # Default values
+    region = "eu"
+    shard = "eu"
 
 # Function to get port and password
 
@@ -104,11 +111,11 @@ def send_api_request(url, method, data=None):
                 "Authorization": f"Bearer {auth_token}"
             }
             if method == "GET":
-                response = requests.get(url, headers=headers, json=data)
+                response = requests.get(url, headers=headers)
             elif method == "POST":
                 response = requests.post(url, headers=headers, json=data)
             elif method == "DELETE":
-                response = requests.delete(url, headers=headers, json=data)
+                response = requests.delete(url, headers=headers)
             elif method == "PUT":
                 response = requests.put(url, headers=headers, json=data)
                 
@@ -273,7 +280,8 @@ class MainWindow(QMainWindow):
     def refresh(self):
     # Refresh the tokens
         get_tokens(self.port, self.password)
-
+        get_prematchid(self.port, self.password)
+        get_matchid(self.port, self.password)
         get_partyid(self.port, self.password)
 
     # Clear the existing layout of the friends tab
@@ -313,6 +321,18 @@ class MainWindow(QMainWindow):
         self.delay_time_spinbox.setRange(6, 60)  # Set the range to 1-60 seconds
         layout.addWidget(self.delay_time_spinbox)
 
+        layout.addWidget(QLabel("Region:"))
+        self.region_combobox = QComboBox()
+        self.region_combobox.addItems(["eu", "na", "ap", "kr", "latam"])  # Add more regions as needed
+        self.region_combobox.setCurrentText(region)
+        layout.addWidget(self.region_combobox)
+
+        layout.addWidget(QLabel("Shard:"))
+        self.shard_combobox = QComboBox()
+        self.shard_combobox.addItems(["eu", "na", "ap", "kr", "latam"])  # Add more shards as needed
+        self.shard_combobox.setCurrentText(shard)
+        layout.addWidget(self.shard_combobox)
+
         layout.addWidget(QLabel("Window Width:"))
         self.width_spinbox = QSpinBox()
         self.width_spinbox.setRange(500, 2000)
@@ -330,11 +350,20 @@ class MainWindow(QMainWindow):
         dialog.exec_()
 
     def save_settings(self):
+        global region, shard
+        region = self.region_combobox.currentText()
+        shard = self.shard_combobox.currentText()
+
+        # Save region and shard to file
+        with open('settings.json', 'w') as f:
+            json.dump({'region': region, 'shard': shard}, f)
+            
         self.delay_time = self.delay_time_spinbox.value()
         self.width = self.width_spinbox.value()
         self.height = self.height_spinbox.value()
 
         self.resize(self.width, self.height)
+        self.refresh()
 
         print(f"Saved settings: delay_time={self.delay_time} seconds")
  
@@ -356,7 +385,7 @@ class MainWindow(QMainWindow):
 		"spikerush",
 		"deathmatch",
 		"ggteam",
-		"custom (cant be started from here)"
+		"custom"
 	]
         self.queue_dropdown.addItems(queue)
         self.change_queue_button = QPushButton("Change Queue")
