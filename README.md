@@ -12,6 +12,8 @@ PYQT5 GUI with features for the valo client using the api
 
 # Information
   ## To optimize user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
+  
+  default region is 'eu' -> change in settings as needed
 
   Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
   
