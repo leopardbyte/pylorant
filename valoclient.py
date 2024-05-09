@@ -356,7 +356,7 @@ class MainWindow(QMainWindow):
 		"spikerush",
 		"deathmatch",
 		"ggteam",
-		"custom"
+		"custom (cant be started from here)"
 	]
         self.queue_dropdown.addItems(queue)
         self.change_queue_button = QPushButton("Change Queue")
