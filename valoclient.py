@@ -10,7 +10,7 @@ import json
 import time
 import subprocess
 import base64
-region = "eu"
+region = "eu" #add region % shard selection on first loadup
 shard  = "eu"
 
 # Function to get port and password
