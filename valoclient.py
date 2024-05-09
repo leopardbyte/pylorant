@@ -111,11 +111,11 @@ def send_api_request(url, method, data=None):
                 "Authorization": f"Bearer {auth_token}"
             }
             if method == "GET":
-                response = requests.get(url, headers=headers)
+                response = requests.get(url, headers=headers, json=data)
             elif method == "POST":
                 response = requests.post(url, headers=headers, json=data)
             elif method == "DELETE":
-                response = requests.delete(url, headers=headers)
+                response = requests.delete(url, headers=headers, json=data)
             elif method == "PUT":
                 response = requests.put(url, headers=headers, json=data)
                 
