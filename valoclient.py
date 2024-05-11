@@ -323,13 +323,13 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel("Region:"))
         self.region_combobox = QComboBox()
-        self.region_combobox.addItems(["eu", "na", "ap", "kr", "latam"])  # Add more regions as needed
+        self.region_combobox.addItems(["eu", "na", "ap", "kr", "latam", "br"])  # Add more regions as needed
         self.region_combobox.setCurrentText(region)
         layout.addWidget(self.region_combobox)
 
         layout.addWidget(QLabel("Shard:"))
         self.shard_combobox = QComboBox()
-        self.shard_combobox.addItems(["eu", "na", "ap", "kr", "latam"])  # Add more shards as needed
+        self.shard_combobox.addItems(["eu", "na", "ap", "kr", "latam", "br"])  # Add more shards as needed
         self.shard_combobox.setCurrentText(shard)
         layout.addWidget(self.shard_combobox)
 
