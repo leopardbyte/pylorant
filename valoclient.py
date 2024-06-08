@@ -21,7 +21,6 @@ except FileNotFoundError:
     shard = "eu"
 
 # Function to get port and password
-
 def get_port_password():
     home_dir = os.path.expanduser("~")
     lockfile_path = os.path.join(home_dir, r"AppData\\Local\\Riot Games\\Riot Client\\Config\\lockfile")
@@ -87,16 +86,13 @@ def get_partyid(port, password):
 # Function to get auth token and entitlement token
 def get_tokens(port, password):
     global auth_token, entitlement_token
-    if auth_token and entitlement_token:
+    url = f"https://127.0.0.1:{port}/entitlements/v1/token"
+    response = requests.get(url, auth=("riot", password), verify=False)
+    if response.status_code == 200:
+        auth_token, entitlement_token = response.json()["accessToken"], response.json()["token"]
         return auth_token, entitlement_token
     else:
-        url = f"https://127.0.0.1:{port}/entitlements/v1/token"
-        response = requests.get(url, auth=("riot", password), verify=False)
-        if response.status_code == 200:
-            auth_token, entitlement_token = response.json()["accessToken"], response.json()["token"]
-            return auth_token, entitlement_token
-        else:
-            return None, None
+        return None, None
 
 # Function to send API request
 def send_api_request(url, method, data=None):
@@ -111,11 +107,11 @@ def send_api_request(url, method, data=None):
                 "Authorization": f"Bearer {auth_token}"
             }
             if method == "GET":
-                response = requests.get(url, headers=headers, json=data)
+                response = requests.get(url, headers=headers)
             elif method == "POST":
                 response = requests.post(url, headers=headers, json=data)
             elif method == "DELETE":
-                response = requests.delete(url, headers=headers, json=data)
+                response = requests.delete(url, headers=headers)
             elif method == "PUT":
                 response = requests.put(url, headers=headers, json=data)
                 
@@ -140,7 +136,7 @@ class MainWindow(QMainWindow):
 
         self.port, self.password = get_port_password()
         self.resize(500, 300)
-        self.statusBar().showMessage("Ready")
+        self.statusBar().setStyleSheet("color: rgb(57, 255, 20);")
 
         self.toolbar = self.addToolBar('yk')
         self.addToolBar(Qt.BottomToolBarArea, self.toolbar)
@@ -276,6 +272,13 @@ class MainWindow(QMainWindow):
             if child.widget():
                 child.widget().deleteLater()
 
+    def check_game_status(self):
+        if get_partyid(self.port, self.password):
+            self.statusBar().showMessage("Ready")
+            QTimer.singleShot(30 * 60 * 1000, self.check_game_status)  # Check again in 30 minutes
+        else:
+            self.statusBar().showMessage("Valorant not running")
+            QTimer.singleShot(45 * 1000, self.check_game_status)  # Check again in 45 seconds
     
     def refresh(self):
     # Refresh the tokens
