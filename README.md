@@ -18,6 +18,7 @@ PYQT5 GUI with features for Valorant using the Api
   
   default region is 'eu' -> change in settings as needed
 
+if you are lazy or dont want to install python use exe
 
 # Requirements
   [Python](https://www.python.org/downloads/) 3.12 (older versions 3.10 etc should work aswell)
