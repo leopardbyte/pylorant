@@ -8,7 +8,7 @@ PYQT5 GUI with features for Valorant using the Api
 - [x] name reveal (reveal players that hide their names)
 - [x] friends tab \ invite all button
 - [x] custom tab \ send custom Api calls
-- [x] view store with only running riot client
+- [ ] view store with only running riot client
 - [x] lobby reveal for League of legends ranked games (in champselect press refresh button and check friends tab) 
 - [ ] loadout
 - [ ] use threading so gui doesnt freeze at each api call ._.
