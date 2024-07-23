@@ -1,24 +1,21 @@
 # pylorant
-PYQT5 GUI with features for the valo client using the api
+PYQT5 GUI with features for Valorant using the Api
 
 # Features 
 - [x] change queue \ start queue \ prevent lobby from starting queue
 - [x] lock agents (adjustable delay)
 - [x] Dodge button (dodge agent select \ no restart needed)
-- [x] name reveal (only use ingame! not while in loading screen)
+- [x] name reveal (reveal players that hide their names)
 - [x] friends tab \ invite all button
-- [x] custom tab \ send custom api calls
+- [x] custom tab \ send custom Api calls
 - [x] view store with only running riot client 
 - [ ] loadout
+- [ ] use threading so gui doesnt freeze at each api call ._.
 
 # Information
   ## To optimize user experience, it is highly recommended to initiate Valorant prior to launching Pylorant.
   
   default region is 'eu' -> change in settings as needed
-
-  Auto Lock: before queueing -> select your agent -> check the auto lock checkbox -> and queue.
-  
-  after a match reactivate auto lock before or while queuing
 
 
 # Requirements
@@ -31,9 +28,6 @@ PYQT5 GUI with features for the valo client using the api
   -> start Valorant
   
   -> start valoclient.py
-
-> [!IMPORTANT]
-> Try to avoid using api calls while in loading screen stages otherwise long loading screens may occur
 
 # Screenshots:
   ![image](https://github.com/leopardbyte/pylorant/assets/164386226/ea02e916-0c70-474a-91ac-d131661e0d60)
