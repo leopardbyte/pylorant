@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QPushButton, QCheckBox, QComboBox, QLabel, QStyleFactory, QMessageBox, QProgressBar, QListWidget, QListWidgetItem, QAction, QDialog, QSpinBox, QFileDialog, QLineEdit, QTextEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QComboBox, QLabel, QStyleFactory, QMessageBox, QProgressBar, QListWidget, QListWidgetItem, QAction, QDialog, QSpinBox, QFileDialog, QLineEdit, QTextEdit
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtGui
@@ -406,8 +406,8 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         self.agent_dropdown = QComboBox()
-        agents = requests.get('https://valorant-api.com/v1/agents').json()
-        agent_names = [agent['displayName'] for agent in agents['data']]
+        self.agents_data = requests.get('https://valorant-api.com/v1/agents').json()
+        agent_names = [agent['displayName'] for agent in self.agents_data['data']]
         self.agent_dropdown.addItems(agent_names)
 
         self.lock_checkbox = QCheckBox("Lock Agent")
@@ -418,12 +418,33 @@ class MainWindow(QMainWindow):
 
         self.dodge_button = QPushButton("Dodge")
         self.dodge_button.clicked.connect(self.dodge)
-        
 
         layout.addWidget(self.agent_dropdown)
         layout.addWidget(self.lock_checkbox)
         layout.addWidget(self.auto_lock_checkbox)
         layout.addWidget(self.dodge_button)
+
+        # Map specific agent selection
+        self.map_agent_dropdowns = {}
+        maps = requests.get('https://valorant-api.com/v1/maps').json()
+        # Pregame data reports map IDs using the `mapUrl` field. Map these URLs to
+        # their corresponding display names so we can look up the map's name when
+        # locking an agent.
+        self.map_id_to_name = {
+            m['mapUrl']: m['displayName']
+            for m in maps['data']
+            if m.get('mapUrl')
+        }
+        map_names = [m['displayName'] for m in maps['data'] if m['displayName'] != 'The Range']
+        for name in map_names:
+            map_layout = QHBoxLayout()
+            map_label = QLabel(name)
+            map_combo = QComboBox()
+            map_combo.addItems(agent_names)
+            map_layout.addWidget(map_label)
+            map_layout.addWidget(map_combo)
+            layout.addLayout(map_layout)
+            self.map_agent_dropdowns[name] = map_combo
 
         self.agent_select_tab.setLayout(layout)
 
@@ -530,17 +551,25 @@ class MainWindow(QMainWindow):
     def lock_agent(self):
         if self.lock_checkbox.isChecked() or self.auto_lock_checkbox.isChecked():
             prematchid = get_prematchid(self.port, self.password)
-            agents = requests.get('https://valorant-api.com/v1/agents').json()
-            selected_agent_id = next(agent['uuid'] for agent in agents['data'] if agent['displayName'] == self.agent_dropdown.currentText())
+            match_url = f"https://glz-{region}-1.{shard}.a.pvp.net/pregame/v1/matches/{prematchid}"
+            match_resp = send_api_request(match_url, "GET")
+            match_data = json.loads(match_resp) if match_resp else {}
+            map_id = match_data.get("MapID")
+            map_name = self.map_id_to_name.get(map_id)
+
+            selected_agent_name = self.agent_dropdown.currentText()
+            if map_name and map_name in self.map_agent_dropdowns:
+                selected_agent_name = self.map_agent_dropdowns[map_name].currentText()
+
+            selected_agent_id = next(
+                agent["uuid"]
+                for agent in self.agents_data["data"]
+                if agent["displayName"] == selected_agent_name
+            )
+
             url = f"https://glz-{region}-1.{shard}.a.pvp.net/pregame/v1/matches/{prematchid}/lock/{selected_agent_id}"
             method = "POST"
-            response = send_api_request(url, method)
-            #if response:  # Check if the request was successful
-                #msg = QMessageBox()
-               # msg.setIcon(QMessageBox.Information)
-                #msg.setText(f"Successfully locked agent = {self.agent_dropdown.currentText()}")
-               # msg.setWindowTitle("Agent Lock")
-                #msg.exec_()
+            send_api_request(url, method)
     
     def change_queue(self):
         partyid = get_partyid(self.port, self.password)
