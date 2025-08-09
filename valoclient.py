@@ -1,6 +1,12 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QComboBox, QLabel, QStyleFactory, QMessageBox, QProgressBar, QListWidget, QListWidgetItem, QAction, QDialog, QSpinBox, QFileDialog, QLineEdit, QTextEdit
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
+                             QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox,
+                             QComboBox, QLabel, QStyleFactory, QMessageBox,
+                             QProgressBar, QListWidget, QListWidgetItem,
+                             QAction, QDialog, QSpinBox, QFileDialog,
+                             QLineEdit, QTextEdit, QGraphicsOpacityEffect)
+from PyQt5.QtCore import (Qt, QTimer, QThread, pyqtSignal,
+                          QPropertyAnimation)
+from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5 import QtGui
 import sys
 import os
@@ -129,10 +135,42 @@ def send_api_request(url, method, data=None):
     else:
         print("Failed to get port and password.")
 
+
+class Worker(QThread):
+    """Generic worker thread to keep the UI responsive."""
+
+    result = pyqtSignal(object)
+
+    def __init__(self, fn, *args, **kwargs):
+        super().__init__()
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        result = self.fn(*self.args, **self.kwargs)
+        self.result.emit(result)
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        
+        # Apply dark theme with blue accents to mimic a modern look
+        app = QApplication.instance()
+        if app is not None:
+            dark_palette = QPalette()
+            dark_palette.setColor(QPalette.Window, QColor(30, 30, 30))
+            dark_palette.setColor(QPalette.WindowText, Qt.white)
+            dark_palette.setColor(QPalette.Base, QColor(25, 25, 25))
+            dark_palette.setColor(QPalette.AlternateBase, QColor(30, 30, 30))
+            dark_palette.setColor(QPalette.ToolTipBase, Qt.white)
+            dark_palette.setColor(QPalette.ToolTipText, Qt.white)
+            dark_palette.setColor(QPalette.Text, Qt.white)
+            dark_palette.setColor(QPalette.Button, QColor(45, 45, 45))
+            dark_palette.setColor(QPalette.ButtonText, Qt.white)
+            dark_palette.setColor(QPalette.Highlight, QColor(10, 90, 200))
+            dark_palette.setColor(QPalette.HighlightedText, Qt.black)
+            app.setPalette(dark_palette)
 
         self.port, self.password = get_port_password()
         self.resize(500, 300)
@@ -163,57 +201,52 @@ class MainWindow(QMainWindow):
 
 
         self.setWindowTitle("pylorant")
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
     QMainWindow {
-        background-color: #334D50;
+        background-color: #1e1e2f;
         color: #ffffff;
         font-family: 'Cascadia Mono SemiBold';
     }
     QPushButton {
-        background-color: #333333;
-        border: 2px solid #334D50;
+        background-color: #2c2c3c;
+        border: 1px solid #0d47a1;
         border-radius: 10px;
         padding: 5px;
         color: #ffffff;
-        font-family: 'Cascadia Mono SemiBold';
-        
-                           
     }
     QPushButton:hover {
-        background-color: darkcyan;
+        background-color: #0d47a1;
     }
     QComboBox {
-        background-color: #333333;
-        border: 2px solid #555555;
-        border-radius: 10px;
+        background-color: #2c2c3c;
+        border: 1px solid #0d47a1;
+        border-radius: 6px;
         padding: 5px;
         color: #ffffff;
-        Cascadia Mono SemiBold
     }
     QComboBox QAbstractItemView {
-        background-color: #333333;
+        background-color: #2c2c3c;
         color: #ffffff;
     }
     QCheckBox {
         color: #ffffff;
-        Cascadia Mono SemiBold
     }
-    
     QTabWidget::pane {
         border: 0;
     }
     QTabBar::tab {
-        background: #333333;
+        background: #2c2c3c;
         color: #ffffff;
         padding: 10px;
         margin: 4px;
         border-radius: 4px;
-        Cascadia Mono SemiBold
     }
     QTabBar::tab:selected {
-        background: #555555;
+        background: #0d47a1;
     }
-""")
+"""
+        )
         
 
 
@@ -237,6 +270,15 @@ class MainWindow(QMainWindow):
         self.tab_widget.addTab(self.friends_tab, "Friends")
         self.tab_widget.addTab(self.misc_tab, "Misc")
         self.tab_widget.addTab(self.custom_tab, "Custom")
+        # Connect tab change to animation
+        self.tab_widget.currentChanged.connect(self.animate_tab_transition)
+
+        # Fade-in animation for the main window
+        self.fade_anim = QPropertyAnimation(self, b"windowOpacity")
+        self.fade_anim.setDuration(600)
+        self.fade_anim.setStartValue(0)
+        self.fade_anim.setEndValue(1)
+        self.fade_anim.start()
 
         valorant_icon_base64 = "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"
         valorant_icon_bytes = base64.b64decode(valorant_icon_base64)
@@ -769,6 +811,18 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.friends_list)
         layout.addWidget(self.invite_button)'''
 
+
+    def animate_tab_transition(self, index):
+        widget = self.tab_widget.widget(index)
+        effect = QGraphicsOpacityEffect()
+        widget.setGraphicsEffect(effect)
+        anim = QPropertyAnimation(effect, b'opacity', self)
+        anim.setDuration(300)
+        anim.setStartValue(0.0)
+        anim.setEndValue(1.0)
+        anim.start()
+        self._current_anim = anim
+
     def get_presences(self):
         try:
             if self.port is None:
@@ -781,22 +835,27 @@ class MainWindow(QMainWindow):
             print(f"Error: {e}")
             return []
 
+    def run_in_thread(self, fn, *args, callback=None, **kwargs):
+        """Utility to run a function in a background thread."""
+        worker = Worker(fn, *args, **kwargs)
+        if callback:
+            worker.result.connect(callback)
+        worker.start()
+        return worker
+
     
     def invite_friend(self):
-    # Get the party id
-        party_id = get_partyid(self.port, self.password)
-
-    # Get the list of friends
-        friends = self.get_presences()
-        if isinstance(friends, dict) and 'presences' in friends:
-            for friend in friends['presences']:
-             # Check if the friend is playing Valorant
-                if friend['product'] == 'valorant':
-                    game_name, game_tag = friend['game_name'], friend['game_tag']
-                    url = f"https://glz-eu-1.eu.a.pvp.net/parties/v1/parties/{party_id}/invites/name/{game_name}/tag/{game_tag}"
-                    method = "POST"
-                    send_api_request(url, method)
-
+        def task():
+            party_id = get_partyid(self.port, self.password)
+            friends = self.get_presences()
+            if isinstance(friends, dict) and 'presences' in friends:
+                for friend in friends['presences']:
+                    if friend['product'] == 'valorant':
+                        game_name = friend['game_name']
+                        game_tag = friend['game_tag']
+                        url = f"https://glz-eu-1.eu.a.pvp.net/parties/v1/parties/{party_id}/invites/name/{game_name}/tag/{game_tag}"
+                        send_api_request(url, "POST")
+        self.run_in_thread(task)
 
 app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
 app.setStyle(QStyleFactory.create('Fusion'))  # Set the application style to 'Fusion'
