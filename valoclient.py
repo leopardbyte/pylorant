@@ -170,6 +170,35 @@ class Worker(QThread):
         self.result.emit(result)
 
 
+class AnimatedButton(QPushButton):
+    """Smaller button with a subtle hover animation."""
+
+    def __init__(self, text: str = "", parent: QWidget = None):
+        super().__init__(text, parent)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setMinimumHeight(28)
+
+        self._opacity_effect = QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(self._opacity_effect)
+
+        self._anim = QPropertyAnimation(self._opacity_effect, b"opacity", self)
+        self._anim.setDuration(200)
+
+    def enterEvent(self, event):
+        self._anim.stop()
+        self._anim.setStartValue(self._opacity_effect.opacity())
+        self._anim.setEndValue(0.7)
+        self._anim.start()
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self._anim.stop()
+        self._anim.setStartValue(self._opacity_effect.opacity())
+        self._anim.setEndValue(1.0)
+        self._anim.start()
+        super().leaveEvent(event)
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -237,8 +266,8 @@ class MainWindow(QMainWindow):
     QPushButton {
         background-color: #2c2c3c;
         border: 1px solid #0d47a1;
-        border-radius: 10px;
-        padding: 5px;
+        border-radius: 6px;
+        padding: 4px 8px;
         color: #ffffff;
     }
     QPushButton:hover {
@@ -258,19 +287,6 @@ class MainWindow(QMainWindow):
     QCheckBox {
         color: #ffffff;
     }
-    QTabWidget::pane {
-        border: 0;
-    }
-    QTabBar::tab {
-        background: #2c2c3c;
-        color: #ffffff;
-        padding: 10px;
-        margin: 4px;
-        border-radius: 4px;
-    }
-    QTabBar::tab:selected {
-        background: #0d47a1;
-    }
 """
         )
         
@@ -279,6 +295,21 @@ class MainWindow(QMainWindow):
         # Modern stacked interface with side navigation
         self.nav_list = QListWidget()
         self.nav_list.setFixedWidth(150)
+        self.nav_list.setStyleSheet(
+            """
+            QListWidget {
+                background-color: #2c2c3c;
+                border-right: 1px solid #0d47a1;
+            }
+            QListWidget::item {
+                padding: 8px;
+                color: #ffffff;
+            }
+            QListWidget::item:selected {
+                background-color: #0d47a1;
+            }
+            """
+        )
         self.stack = QStackedWidget()
 
         self.matchmaking_tab = QWidget()
@@ -426,7 +457,7 @@ class MainWindow(QMainWindow):
         self.height_spinbox.setRange(300, 2000)
         layout.addWidget(self.height_spinbox)
 
-        save_button = QPushButton("Save")
+        save_button = AnimatedButton("Save")
         save_button.clicked.connect(self.save_settings)
         layout.addWidget(save_button)
 
@@ -455,9 +486,9 @@ class MainWindow(QMainWindow):
     def create_matchmaking_tab(self):
         layout = QVBoxLayout()
 
-        self.enter_queue_button = QPushButton("Enter Queue")
+        self.enter_queue_button = AnimatedButton("Enter Queue")
         self.enter_queue_button.clicked.connect(self.enter_queue)
-        self.leave_queue_button = QPushButton("Leave Queue")
+        self.leave_queue_button = AnimatedButton("Leave Queue")
         self.leave_queue_button.clicked.connect(self.leave_queue)
 
         self.queue_dropdown = QComboBox()
@@ -471,7 +502,7 @@ class MainWindow(QMainWindow):
 		"custom"
 	]
         self.queue_dropdown.addItems(queue)
-        self.change_queue_button = QPushButton("Change Queue")
+        self.change_queue_button = AnimatedButton("Change Queue")
         self.change_queue_button.clicked.connect(self.change_queue)
 
 
@@ -496,7 +527,7 @@ class MainWindow(QMainWindow):
         self.auto_lock_checkbox = QCheckBox("Auto Lock")
         self.auto_lock_checkbox.stateChanged.connect(self.auto_lock)
 
-        self.dodge_button = QPushButton("Dodge")
+        self.dodge_button = AnimatedButton("Dodge")
         self.dodge_button.clicked.connect(self.dodge)
 
         layout.addWidget(self.agent_dropdown)
@@ -543,7 +574,7 @@ class MainWindow(QMainWindow):
     def create_reveal_tab(self):
         layout = QVBoxLayout()
 
-        self.reveal_names_button = QPushButton("Reveal Names")
+        self.reveal_names_button = AnimatedButton("Reveal Names")
         self.reveal_names_button.clicked.connect(self.reveal_names)
 
         self.names_output = QLabel()
@@ -571,7 +602,7 @@ class MainWindow(QMainWindow):
         self.skin_dropdown.addItems(skin_names)
 
     # Create a button to change the loadout
-        self.change_loadout_button = QPushButton("Change Loadout")
+        self.change_loadout_button = AnimatedButton("Change Loadout")
         self.change_loadout_button.clicked.connect(self.change_loadout)
 
     # Add the widgets to the layout
@@ -766,7 +797,7 @@ class MainWindow(QMainWindow):
                 self.friends_list.setItemWidget(item, label)
 
     # Create an invite button
-        self.invite_button = QPushButton('Invite all')
+        self.invite_button = AnimatedButton('Invite all')
         self.invite_button.clicked.connect(self.invite_friend)
         layout.addWidget(self.friends_list)
         layout.addWidget(self.invite_button)
@@ -796,7 +827,7 @@ class MainWindow(QMainWindow):
         self.body_input.setStyleSheet("background-color: #334D50;")
         layout.addWidget(self.body_input)
 
-        self.submit_button = QPushButton('Submit', self.custom_tab)
+        self.submit_button = AnimatedButton('Submit', self.custom_tab)
         self.submit_button.clicked.connect(self.custom)
         layout.addWidget(self.submit_button)
 
@@ -856,7 +887,7 @@ class MainWindow(QMainWindow):
                 self.friends_list.addItem(item)
 
     # Create an invite button
-        self.invite_button = QPushButton('Invite')
+        self.invite_button = AnimatedButton('Invite')
         self.invite_button.clicked.connect(self.invite_friend)
         layout.addWidget(self.friends_list)
         layout.addWidget(self.invite_button)'''
