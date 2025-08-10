@@ -1,9 +1,27 @@
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
-                             QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox,
-                             QComboBox, QLabel, QStyleFactory, QMessageBox,
-                             QProgressBar, QListWidget, QListWidgetItem,
-                             QAction, QDialog, QSpinBox, QFileDialog,
-                             QLineEdit, QTextEdit, QGraphicsOpacityEffect)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QCheckBox,
+    QComboBox,
+    QLabel,
+    QStyleFactory,
+    QMessageBox,
+    QProgressBar,
+    QListWidget,
+    QListWidgetItem,
+    QAction,
+    QDialog,
+    QSpinBox,
+    QFileDialog,
+    QLineEdit,
+    QTextEdit,
+    QGraphicsOpacityEffect,
+    QStackedWidget,
+)
 from PyQt5.QtCore import (Qt, QTimer, QThread, pyqtSignal,
                           QPropertyAnimation)
 from PyQt5.QtGui import QIcon, QPalette, QColor
@@ -186,6 +204,14 @@ class MainWindow(QMainWindow):
         #self.toggleToolbarAction.triggered.connect(self.toggle_toolbar)
         self.delay_time = 6
 
+        # Load saved agent selections for each map
+        self.map_agent_file = "map_agents.json"
+        try:
+            with open(self.map_agent_file, "r") as f:
+                self.saved_map_agents = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.saved_map_agents = {}
+
 
         self.toolbar.setMovable(False)
         self.toolbar.setStyleSheet("background-color: #1F2041;")
@@ -250,9 +276,10 @@ class MainWindow(QMainWindow):
         
 
 
-        self.tab_widget = QTabWidget()
-        self.setCentralWidget(self.tab_widget)
-        
+        # Modern stacked interface with side navigation
+        self.nav_list = QListWidget()
+        self.nav_list.setFixedWidth(150)
+        self.stack = QStackedWidget()
 
         self.matchmaking_tab = QWidget()
         self.agent_select_tab = QWidget()
@@ -262,16 +289,27 @@ class MainWindow(QMainWindow):
         self.misc_tab = QWidget()
         self.custom_tab = QWidget()
 
-        self.tab_widget.setStyleSheet("QTabBar::tab { color: black; }")    
-        self.tab_widget.addTab(self.matchmaking_tab, "Matchmaking")
-        self.tab_widget.addTab(self.agent_select_tab, "Agent Select")
-        self.tab_widget.addTab(self.reveal_tab, "Reveal")
-        #self.tab_widget.addTab(self.loadout_tab, "Loadout")
-        self.tab_widget.addTab(self.friends_tab, "Friends")
-        self.tab_widget.addTab(self.misc_tab, "Misc")
-        self.tab_widget.addTab(self.custom_tab, "Custom")
-        # Connect tab change to animation
-        self.tab_widget.currentChanged.connect(self.animate_tab_transition)
+        self.stack.addWidget(self.matchmaking_tab)
+        self.stack.addWidget(self.agent_select_tab)
+        self.stack.addWidget(self.reveal_tab)
+        #self.stack.addWidget(self.loadout_tab)
+        self.stack.addWidget(self.friends_tab)
+        self.stack.addWidget(self.misc_tab)
+        self.stack.addWidget(self.custom_tab)
+
+        for name in ["Matchmaking", "Agent Select", "Reveal", "Friends", "Misc", "Custom"]:
+            self.nav_list.addItem(name)
+
+        container = QWidget()
+        layout = QHBoxLayout()
+        layout.addWidget(self.nav_list)
+        layout.addWidget(self.stack)
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+
+        self.nav_list.currentRowChanged.connect(self.stack.setCurrentIndex)
+        self.nav_list.currentRowChanged.connect(self.animate_page_transition)
+        self.nav_list.setCurrentRow(0)
 
         # Fade-in animation for the main window
         self.fade_anim = QPropertyAnimation(self, b"windowOpacity")
@@ -483,12 +521,24 @@ class MainWindow(QMainWindow):
             map_label = QLabel(name)
             map_combo = QComboBox()
             map_combo.addItems(agent_names)
+            if name in self.saved_map_agents:
+                map_combo.setCurrentText(self.saved_map_agents[name])
+            map_combo.currentTextChanged.connect(lambda agent, m=name: self.save_agent_selection(m, agent))
             map_layout.addWidget(map_label)
             map_layout.addWidget(map_combo)
             layout.addLayout(map_layout)
             self.map_agent_dropdowns[name] = map_combo
 
         self.agent_select_tab.setLayout(layout)
+
+    def save_agent_selection(self, map_name, agent_name):
+        """Persist the selected agent for a given map to disk."""
+        self.saved_map_agents[map_name] = agent_name
+        try:
+            with open(self.map_agent_file, "w") as f:
+                json.dump(self.saved_map_agents, f, indent=4)
+        except IOError as e:
+            print(f"Failed to save agent selection: {e}")
 
     def create_reveal_tab(self):
         layout = QVBoxLayout()
@@ -812,8 +862,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.invite_button)'''
 
 
-    def animate_tab_transition(self, index):
-        widget = self.tab_widget.widget(index)
+    def animate_page_transition(self, index):
+        widget = self.stack.widget(index)
         effect = QGraphicsOpacityEffect()
         widget.setGraphicsEffect(effect)
         anim = QPropertyAnimation(effect, b'opacity', self)
